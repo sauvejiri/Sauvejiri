@@ -1,4 +1,4 @@
-# Sauve Jiri - Treeaid App
+# Sauve Jiri - Tree Aid App
 ## Introduction
 
 To help farmers in Mali, we have developed a prototype of an application which helps local farmers sustaining the trees in their area. This is done via multiple functionalities. The main programmed functionalities are the sharing of knowledge about certain tree types, and the reporting of illegal cut trees. After these reports, the team can take necessary action. 
