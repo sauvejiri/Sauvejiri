@@ -25,8 +25,8 @@ User passwords are stored in salted bCrypt hashes, which are not reversable and 
 
 ## Installation
 
-> It is easy to install the Sauve Jiri app to any webspace. It runs completely on VoiceXML, PHP and MYSQL. Installation is as easy as changing a few configurations (Your database information) and running an import of the database. 
+ It is easy to install the Sauve Jiri app to any webspace. It runs completely on VoiceXML, PHP and MYSQL. Installation is as easy as changing a few configurations (Your database information) and running an import of the database. 
 
-> First, you need to change the database configuration in the config.php file. Afterwards, run the db.sql from the db_install folder in your database management program. In case of phpmyadmin, this can be done from the top menu. Go to import, and upload and run the file.
+ First, you need to change the database configuration in the config.php file. Afterwards, run the db.sql from the db_install folder in your database management program. In case of phpmyadmin, this can be done from the top menu. Go to import, and upload and run the file.
 
-> Finally, go to admin/register.php to register a new admin users. Permissions are not yet implemented and are therefore not present.
+ Finally, go to admin/register.php to register a new admin users. Permissions are not yet implemented and are therefore not present.
