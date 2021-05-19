@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml version="2.1">
+
+<!-- Log errors to maintainer -->
+<meta name="maintainer" content="thom.scholten@live.nl"/>
+
+<!-- Create global variables -->
+<var name="phoneNumber" />
+<var name="startTime" />
+<var name="sessionId" />
+
+<!-- Assign session variables, use CDATA for security purposes -->
+  <script>
+  <![CDATA[
+    phoneNumber = session.telephone.ani;
+    sessionId = session.sessionid;
+     ]]>
+  </script>
+  
+  <!-- Catch end event -->
+<catch event="end"> 
+ <disconnect/> 
+</catch>
+
+<!-- Catch disconnect from caller -->
+<catch event="connection.disconnect.hangup">
+   <data src="http://colourfultaste.nl/log_end.php" method="post" namelist="phoneNumber sessionId" />
+</catch>
+  
+  <!-- Immidiatly log raw call data -->
+  <data src="http://colourfultaste.nl/log_call.php" method="post" namelist="phoneNumber sessionId" />
+  
+  
+  <!-- Starting Menu - Layer 1 -->
+  <menu id="menu1">
+  <prompt>
+   <audio src="http://colourfultaste.nl/voice_clips/First-Welcome-Menu.wav"/>
+   <audio src="http://colourfultaste.nl/voice_clips/RU/PressLanguageRU.wav"/>
+  </prompt>
+  <choice dtmf="1" next="#english"/>
+  <choice dtmf="2" next="https://colourfultaste.nl/french.vxml"/>
+  <choice dtmf="3" next="https://colourfultaste.nl/russian.vxml"/>
+  </menu>
+  
+<!-- Location Menu - Layer 2 (english) -->
+<form id="english">
+    <!-- update db language -->
+    <var name="language" expr="'English'" />
+    <data src="http://colourfultaste.nl/log_language.php" method="post" namelist="language sessionId" />
+
+<field name="location">
+  <prompt>
+  <!-- temporary solution -->
+  <audio src="http://colourfultaste.nl/voice_clips/Select-region.wav"/>
+  
+    <!-- Press 1 for Mopti -->
+     <audio src="http://colourfultaste.nl/voice_clips/Mopti.wav"/><audio src="http://colourfultaste.nl/voice_clips/Press-one.wav"/>
+     
+    <!-- Press 2 for Segou -->
+    <audio src="http://colourfultaste.nl/voice_clips/Segou.wav"/><audio src="http://colourfultaste.nl/voice_clips/Press-two.wav"/>
+    
+    <!-- Press 3 for Koulikoro -->
+    <audio src="http://colourfultaste.nl/voice_clips/Koulikoro.wav"/><audio src="http://colourfultaste.nl/voice_clips/Press-three.wav"/>
+    
+    <!-- Press 4 for Kidal --> 
+    <audio src="http://colourfultaste.nl/voice_clips/Kidal.wav"/><audio src="http://colourfultaste.nl/voice_clips/Press-four.wav"/>
+    
+    <!-- Press 5 for Gao --> 
+    <audio src="http://colourfultaste.nl/voice_clips/Gao.wav"/><audio src="http://colourfultaste.nl/voice_clips/Press-five.wav"/>
+  </prompt>
+
+  <option dtmf="1" value="mopti"> Mopti </option>
+  <option dtmf="2" value="segou"> Segou </option>
+  <option dtmf="3" value="koulikoro"> Koulikoro</option>
+  <option dtmf="4" value="kidal"> Kidal</option>
+  <option dtmf="5" value="gao"> Gao</option>
+
+  <filled>
+  <data src="http://colourfultaste.nl/log_location.php" method="post" namelist="location sessionId" />
+  <goto next="#options_english"/>
+  </filled>
+</field>
+</form>
+ 
+ 
+ <!-- Subject Menu - Layer 3 (english) -->
+ 
+ <menu id="options_english">
+ <property name="inputmodes" value="dtmf"/>
+  <prompt> <audio src="http://colourfultaste.nl/voice_clips/TreeOrStory%20EN.wav"/> </prompt>
+  <choice dtmf="1" next="#reportChopping_english"/>
+  <choice dtmf="2" next="#treeStory_english"/>
+ 
+ </menu>
+ 
+
+
+
+<!-- Report Chopping - Layer 4 (english) --> 
+<form id="reportChopping_english">
+
+     <property name="bargein" value="true"/>
+     <block>
+       <prompt>
+       <audio src="http://colourfultaste.nl/voice_clips/New_RecordMessageEN.wav"/> 
+       </prompt>
+     </block>
+     <record  name="msg" beep="true" maxtime="60s"
+       finalsilence="4000ms" dtmfterm="true" type="audio/x-wav">
+       <noinput>
+       
+         <audio src="http://colourfultaste.nl/voice_clips/TryAgain%20EN.wav"/>
+       </noinput>
+       <filled>
+       <assign name="recordingName" expr="'reportChopping-'+ sessionId"/>
+       <data src="http://colourfultaste.nl/saveMessage.php" method="post" namelist="msg recordingName sessionId" enctype="multipart/form-data"/>
+        
+        <goto next="#thanks_menu"/>
+        </filled>
+     </record>
+     </form>
+
+
+<!-- Thank You - Layer 5 (english) --> 
+    <menu id="thanks_menu">
+ <property name="inputmodes" value="dtmf"/>
+  <prompt><audio src="http://colourfultaste.nl/voice_clips/Finish%20English.wav"/> </prompt>
+  <choice dtmf="0" next="#english"/>
+  <choice dtmf="1" event="end"/>
+ 
+ </menu>
+
+<!--Tree Story - Layer 4 (english) -->  
+   <form id="treeStory_english">
+
+     <property name="bargein" value="true"/>
+     <block>
+       <prompt>
+       <audio src="http://colourfultaste.nl/voice_clips/ChoseStory%20EN.wav"/>
+       <audio src="http://colourfultaste.nl/voice_clips/New_RecordMessageEN.wav"/> 
+       </prompt>
+     </block>
+     <record  name="msg" beep="true" maxtime="60s"
+       finalsilence="4000ms" dtmfterm="true" type="audio/x-wav">
+       <noinput>
+       
+         <audio src="http://colourfultaste.nl/voice_clips/TryAgain%20EN.wav"/>
+       </noinput>
+       <filled>
+       <assign name="recordingName" expr="'treeStory-'+ sessionId"/>
+       <data src="http://colourfultaste.nl/saveMessageTree.php" method="post" namelist="msg recordingName sessionId" enctype="multipart/form-data"/>
+        
+        <goto next="#thanks_menu"/>
+        </filled>
+     </record>
+     </form>
+   
+  
+   
+   
+
+ 
+ 
+ 
+ 
+
+
+
+</vxml>
